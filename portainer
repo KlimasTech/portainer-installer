@@ -1,0 +1,46 @@
+#!/usr/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}=== Portainer Installation Menu ===${NC}"
+echo -e "${YELLOW}1. ${GREEN}Instalacja Portainer CE${NC}"
+echo -e "${YELLOW}2. ${YELLOW}Instalacja Portainer BE${NC}"
+echo -e "${YELLOW}0. ${RED}Wyjdz${NC}"
+
+read -p "Twoj wybor: " choice
+
+case $choice in
+    1)
+        echo -e "${GREEN}Upgrading Portainer CE...${NC}"
+        echo -e "${GREEN}Stop Portainer..."
+        sudo docker stop portainer
+        echo "Remove Portainer..."
+        sudo docker rm portainer
+        echo "Pull latest Portainer CE..."
+        sudo docker pull portainer/portainer-ce:latest
+        echo "Starting Portainer CE..."
+        sudo docker run -d -p 8000:8000 -p 9443:9443 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+        ;;
+    2)
+        echo -e "${GREEN}Upgrading Portainer BE...${NC}"
+        echo -e "${GREEN}Stop Portainer..."
+        sudo docker stop portainer
+        echo "Remove Portainer..."
+        sudo docker rm portainer
+        echo "Pull latest Portainer BE..."
+        sudo docker pull portainer/portainer-ee:latest
+        echo "Starting Portainer BE..."
+        sudo docker run -d -p 8000:8000 -p 9000:9000 -p 9443:9443 --name=portainer --restart=always --pull=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ee:latest
+        ;;
+    0)
+        echo -e "${RED}Wychodze...${NC}"
+        exit 0
+        ;;
+    *)
+        echo -e "${RED}Bledny wybor. Wychodze...${NC}"
+        exit 1
+        ;;
+esac
